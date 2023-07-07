@@ -63,7 +63,7 @@ Note: Make sure to adjust the paths and parameters in the scripts as per your sy
 
 ## Contributors
 
-- Lasekan Anjolaoluwa Dominion(https://github.com/your-username)
+- Lasekan Anjolaoluwa Dominion(https://github.com/Anjolash)
 
 Feel free to contribute to this project by creating pull requests or reporting issues.
 
