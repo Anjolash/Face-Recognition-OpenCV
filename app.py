@@ -177,31 +177,27 @@ def find_match(face_embedding, embeddings, labels, threshold=0.6):
         return "Unknown", similarity
 
 def process_image(image, embeddings, labels):
-    """Process image and return detections with matches"""
     try:
-        faces = face_app.get(image)
+        faces = get_face_app().get(image)
     except Exception as e:
         print(f"Error detecting faces: {e}")
         return []
 
     results = []
     for face in faces:
-        try:
-            bbox = face.bbox.astype(int)
-            x1, y1, x2, y2 = bbox
-            embedding = face.embedding
-            name, confidence = find_match(embedding, embeddings, labels)
+        bbox = face.bbox.astype(int)
+        x1, y1, x2, y2 = bbox
+        embedding = face.embedding
+        name, confidence = find_match(embedding, embeddings, labels)
 
-            results.append({
-                'bbox': [int(x1), int(y1), int(x2), int(y2)],
-                'name': name,
-                'confidence': float(confidence)
-            })
-        except Exception as e:
-            print(f"Error processing face: {e}")
-            continue
+        results.append({
+            'bbox': [int(x1), int(y1), int(x2), int(y2)],
+            'name': name,
+            'confidence': float(confidence)
+        })
 
     return results
+
 
 @app.route('/')
 def index():
