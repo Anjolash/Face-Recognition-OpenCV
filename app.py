@@ -6,6 +6,7 @@ SERVER-SIDE SESSION STORAGE VERSION - FIXED
 - Each user session stored server-side (not in cookies)
 - Handles large datasets (1000+ embeddings)
 - User additions/deletions only affect their session
+- Thread-safe model loading
 """
 
 from flask import Flask, render_template, request, jsonify
@@ -16,6 +17,7 @@ import pickle
 import base64
 import os
 import uuid
+import threading
 from pathlib import Path
 from insightface.app import FaceAnalysis
 from scipy.spatial.distance import cosine
@@ -29,17 +31,31 @@ CORS(app)
 app.config['UPLOAD_FOLDER'] = 'static'
 os.makedirs('static/screenshots', exist_ok=True)
 
-# Load ArcFace model - FIXED TYPO
-face_app = None  # ✅ Fixed: was "pface_app"
+import threading
+
+# ... other imports ...
+
+# Load ArcFace model with thread safety
+face_app = None
+face_app_lock = threading.Lock()
 
 def get_face_app():
     global face_app
-    if face_app is None:
+
+    # Double-check locking pattern
+    if face_app is not None:
+        return face_app
+
+    with face_app_lock:
+        # Check again inside the lock
+        if face_app is not None:
+            return face_app
+
         print("Loading ArcFace model...")
         face_app = FaceAnalysis(name="buffalo_l", providers=["CPUExecutionProvider"])
         face_app.prepare(ctx_id=-1, det_size=(640, 640))
         print("✓ Model loaded")
-    return face_app
+        return face_app
 
 # BASE EMBEDDINGS (PERMANENT - NEVER MODIFIED)
 BASE_EMBEDDINGS = []
