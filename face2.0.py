@@ -3,7 +3,7 @@ import numpy as np
 from keras.models import load_model
 
 # Load the Keras model
-model = load_model('facial_recognition_model2.h5')
+model = load_model('facial_recognition_model3.h5')
 
 # Load the Haar cascade classifiers
 face_cascade = cv2.CascadeClassifier('cascades/haarcascade_frontalface_alt2.xml')
