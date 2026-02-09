@@ -586,5 +586,5 @@ if __name__ == '__main__':
     print("\n🌐 Server running at: http://localhost:5000")
     print("="*70 + "\n")
 
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 7860))
     app.run(debug=False, port=port, host='0.0.0.0')

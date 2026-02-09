@@ -1,4 +1,14 @@
-# Missing Person Search System
+---
+title: Face Recognition System
+emoji: 🎭
+colorFrom: purple
+colorTo: blue
+sdk: docker
+app_port: 7860
+---
+
+# Face Recognition System
+
 
 This project is aimed at developing a Missing Person Search System using Facial Recognition Technology. The system consists of two main components: training the facial recognition model and performing real-time facial recognition for identification purposes.
 
