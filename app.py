@@ -30,10 +30,17 @@ app.config['UPLOAD_FOLDER'] = 'static'
 os.makedirs('static/screenshots', exist_ok=True)
 
 # Load ArcFace model
-print("Loading ArcFace model...")
-face_app = FaceAnalysis(name="buffalo_l")
-face_app.prepare(ctx_id=-1, det_size=(640, 640))
-print("✓ Model loaded")
+pface_app = None
+
+def get_face_app():
+    global face_app
+    if face_app is None:
+        print("Loading ArcFace model...")
+        from insightface.app import FaceAnalysis
+        face_app = FaceAnalysis(name="buffalo_l", providers=["CPUExecutionProvider"])
+        face_app.prepare(ctx_id=-1, det_size=(640, 640))
+        print("✓ Model loaded")
+    return face_app
 
 # BASE EMBEDDINGS (PERMANENT - NEVER MODIFIED)
 BASE_EMBEDDINGS = []
@@ -415,7 +422,7 @@ def add_person():
                 if img is None:
                     continue
 
-                faces = face_app.get(img)
+                faces = get_face_app().get(img)
 
                 if len(faces) > 0:
                     face = max(faces, key=lambda f: (f.bbox[2]-f.bbox[0]) * (f.bbox[3]-f.bbox[1]))
@@ -472,7 +479,8 @@ def detect_face():
         nparr = np.frombuffer(img_bytes, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-        faces = face_app.get(img)
+        faces = get_face_app().get(img)
+
 
         return jsonify({
             'face_detected': len(faces) > 0,
