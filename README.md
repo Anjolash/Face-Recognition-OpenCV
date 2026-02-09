@@ -1,82 +1,224 @@
 ---
+
 title: Face Recognition System
 emoji: 🎭
 colorFrom: purple
 colorTo: blue
 sdk: docker
 app_port: 7860
+--------------
+
+# 🎭 Face Recognition System
+
+A multi‑approach face recognition project containing **two independent pipelines**:
+
+1. **Classical Computer Vision (OpenCV + LBPH + LFW dataset)** — offline, real‑time recognition from webcam
+2. **Deep Learning (ArcFace / InsightFace Web App)** — high‑accuracy embedding based recognition
+
+This repository demonstrates both traditional and modern face recognition techniques and compares stability, accuracy, and scalability.
+
 ---
 
-# Face Recognition System
+# 🧠 Part 1 — Real‑Time Face Recognition (OpenCV + LFW)
 
+A lightweight real‑time recognition system trained on the **Labeled Faces in the Wild (LFW)** dataset using Local Binary Pattern Histograms (LBPH).
 
-This project is aimed at developing a Missing Person Search System using Facial Recognition Technology. The system consists of two main components: training the facial recognition model and performing real-time facial recognition for identification purposes.
+## Key Features
 
-## Training the Model
+* Real‑time webcam recognition
+* Named celebrities (from LFW dataset)
+* Temporal stabilization (no flickering labels)
+* Face tracking & identity locking
+* Confidence smoothing across frames
+* Works fully offline
+* Runs on CPU in real time
 
-The **train10.py** script is responsible for training the facial recognition model. It uses the OpenCV library to detect faces in images and preprocess them for training. The script follows the following steps:
+---
 
-1. Load the dataset: The script reads the images from the specified dataset directory and extracts the faces using the Viola-Jones face detection algorithm.
+## How It Works
 
-2. Preprocess the images: The extracted faces are resized to a uniform size for consistency during training. The images are stored in an array along with their corresponding labels.
+### Training Pipeline
 
-3. Encode the labels: The labels are encoded using the LabelEncoder from the scikit-learn library to convert them into numerical values.
+1. Load LFW dataset using `sklearn.datasets.fetch_lfw_people`
+2. Filter identities with enough images
+3. Preprocess faces
 
-4. Split the dataset: The dataset is split into training and testing sets using the train_test_split function from scikit-learn.
+   * grayscale
+   * resize
+   * histogram equalization
+4. Train LBPH recognizer
+5. Save:
 
-5. Normalize the pixel values: The pixel values of the images are normalized to improve training performance.
+   * `trainer.yml`
+   * `labels.pickle`
 
-6. Create the CNN model: The Convolutional Neural Network (CNN) model is constructed using the Sequential model from the Keras library. It consists of convolutional and pooling layers followed by fully connected layers.
+### Recognition Pipeline
 
-7. Compile and train the model: The model is compiled with appropriate loss function, optimizer, and metrics, and then trained using the training dataset.
+For each webcam frame:
 
-8. Save the model: The trained model is saved for future use.
+1. Detect faces (Haar Cascade)
+2. Track faces between frames
+3. Predict identity (LBPH)
+4. Apply temporal smoothing
+5. Lock identity for stability
+6. Display result
 
-## Real-time Facial Recognition
+---
 
-The **face2.0.py** script implements the real-time facial recognition functionality. It utilizes the trained model to recognize faces in a live video feed. The script performs the following steps:
+## Temporal Stabilization (Important)
 
-1. Load the trained model: The pre-trained facial recognition model is loaded using the load_model function from Keras.
+The system does NOT rely on single‑frame predictions.
 
-2. Load the Haar cascade classifiers: The Haar cascade classifiers for face, eye, and smile detection are loaded using the CascadeClassifier class from OpenCV.
+Instead it uses:
 
-3. Capture and process the video feed: The script captures frames from the video feed, converts them to grayscale, and detects faces using the face cascade classifier.
+* position tracking
+* rolling prediction buffer
+* majority vote
+* confidence averaging
+* identity lock timer
 
-4. Perform facial recognition: For each detected face, the script resizes and normalizes the face image, passes it through the trained model, and predicts the class probabilities. The predicted class is mapped back to the original label.
+This prevents flickering and creates professional‑quality tracking behavior.
 
-5. Display the results: The script draws bounding boxes around the detected faces and displays the predicted class name and probability on the frame.
+---
 
-6. Print the predictions: After displaying the results, the script prints the predicted class and probability for each detected face.
+## Running the Classical System
 
-## Requirements
+### Train
 
-To run this project, the following dependencies need to be installed:
+```bash
+python train_lfw.py
+```
 
-- OpenCV
-- NumPy
-- scikit-learn
-- Keras
+### View trained identities
 
-Please refer to the respective documentation of each library for installation instructions.
+```bash
+python view_trained_lfw_celebrities.py
+```
 
-## Usage
+### Run recognizer
 
-1. Prepare the dataset: Create a dataset directory containing subdirectories for each person's images. Place the respective images inside each subdirectory.
+```bash
+python recognize_lfw.py
+```
 
-2. Run the training script: Execute the **train10.py** script to train the facial recognition model on the provided dataset. This will save the trained model as "facial_recognition_model3.h5".
+---
 
-3. Run the real-time recognition script: Execute the **face2.0.py** script to perform real-time facial recognition using the trained model. Ensure that the necessary Haar cascade classifier XML files are present in the specified locations.
+# 🚀 Part 2 — Deep Learning Web App (ArcFace)
 
-4. View the results: The script will display the live video feed with bounding boxes around detected faces and their predicted class labels and probabilities.
+A production‑style web application powered by **InsightFace ArcFace embeddings**.
 
-Note: Make sure to adjust the paths and parameters in the scripts as per your system and requirements.
+Live Demo:
+[https://huggingface.co/spaces/Jolaoflagos/face-recognition](https://huggingface.co/spaces/Jolaoflagos/face-recognition)
 
-## Contributors
+---
 
-- Lasekan Anjolaoluwa Dominion(https://github.com/Anjolash)
+## Features
 
-Feel free to contribute to this project by creating pull requests or reporting issues.
+* Upload image recognition
+* Video recognition
+* Live webcam detection
+* Add new person instantly (no retraining)
+* Multi‑face recognition
+* Session‑isolated database
 
-## License
+---
 
-This project is licensed under the [MIT License](LICENSE).
+## Technology Stack
+
+### Backend
+
+* Flask
+* InsightFace (ArcFace buffalo_l model)
+* OpenCV
+* NumPy & SciPy
+* Gunicorn
+
+### Frontend
+
+* HTML5 Canvas
+* JavaScript
+* CSS
+
+### Deployment
+
+* Docker
+* Hugging Face Spaces
+
+---
+
+## Recognition Method (Deep Learning)
+
+Instead of classification, ArcFace uses **embedding similarity**:
+
+1. Extract 512‑D face embedding
+2. Compare using cosine similarity
+3. Match if similarity ≥ threshold
+
+No retraining required when adding people.
+
+---
+
+# 📊 Classical vs Deep Learning
+
+| Feature           | OpenCV LBPH        | ArcFace              |
+| ----------------- | ------------------ | -------------------- |
+| Speed             | Very fast          | Moderate             |
+| Accuracy          | Medium             | Very high            |
+| Training required | Yes                | No                   |
+| Add new person    | Retrain            | Instant              |
+| Offline capable   | Yes                | Yes                  |
+| Hardware          | CPU                | CPU/GPU              |
+| Stability         | Temporal smoothing | Embedding similarity |
+
+---
+
+# 🧪 Use Cases
+
+* Missing person search
+* Attendance systems
+* Smart camera tagging
+* Security verification
+* Research comparison of CV vs Deep Learning
+
+---
+
+# 📁 Project Structure
+
+```
+classical/
+  train_lfw.py
+  recognize_lfw.py
+  view_trained_lfw_celebrities.py
+  trainer.yml
+  labels.pickle
+
+webapp/
+  app.py
+  templates/
+  static/
+  embeddings.pkl
+  Dockerfile
+```
+
+---
+
+# 📝 Resume Highlights
+
+* Built real‑time face recognition system using OpenCV and LBPH
+* Implemented temporal identity stabilization and face tracking
+* Trained model on LFW dataset with named identities
+* Developed production web app using ArcFace embeddings
+* Compared classical CV vs deep learning recognition methods
+
+---
+
+# 👤 Author
+
+Anjolaoluwa Dominion Lasekan
+GitHub: [https://github.com/Anjolash](https://github.com/Anjolash)
+
+---
+
+# License
+
+MIT License

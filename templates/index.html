@@ -18,35 +18,6 @@
             padding: 20px;
         }
 
-        .capture-status {
-            text-align: center;
-            padding: 15px;
-            margin: 15px auto;
-            max-width: 400px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 1.1em;
-            transition: all 0.3s;
-        }
-
-        .capture-status.waiting {
-            background: #fee;
-            color: #c00;
-            border: 2px solid #f00;
-        }
-
-        .capture-status.detecting {
-            background: #efe;
-            color: #080;
-            border: 2px solid #0f0;
-        }
-
-        .capture-status.complete {
-            background: #eef;
-            color: #008;
-            border: 2px solid #00f;
-        }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -80,6 +51,161 @@
 
         .session-notice strong {
             color: #ffd700;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 650px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .modal-content h3 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .modal-content ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .modal-content li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .tip-box {
+            background: #d1ecf1;
+            border: 2px solid #0c5460;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .close-modal {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            display: block;
+            margin: 25px auto 0;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .help-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 999;
+            transition: all 0.3s;
+        }
+
+        .help-btn:hover {
+            background: #764ba2;
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .capture-status {
+            text-align: center;
+            padding: 15px;
+            margin: 15px auto;
+            max-width: 400px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        .capture-status.waiting {
+            background: #fee;
+            color: #c00;
+            border: 2px solid #f00;
+        }
+
+        .capture-status.detecting {
+            background: #efe;
+            color: #080;
+            border: 2px solid #0f0;
+        }
+
+        .capture-status.complete {
+            background: #eef;
+            color: #008;
+            border: 2px solid #00f;
         }
 
         .people-list {
@@ -413,6 +539,83 @@
     </style>
 </head>
 <body>
+    <!-- Help Button -->
+    <button class="help-btn" onclick="showInstructions()" title="Help & Instructions">❓</button>
+
+    <!-- Instructions Modal -->
+    <div id="instructionsModal" class="modal">
+        <div class="modal-content">
+            <h2>🎭 How to Use This System</h2>
+
+            <h3>📋 Features</h3>
+            <ul>
+                <li><strong>📷 Image Upload:</strong> Upload a photo to identify faces instantly</li>
+                <li><strong>🎥 Video Upload:</strong> Upload video to track faces throughout</li>
+                <li><strong>📹 Live Webcam:</strong> Real-time recognition (works best locally)</li>
+                <li><strong>➕ Add Person:</strong> Temporarily add new people to your session</li>
+                <li><strong>👥 Manage:</strong> View and delete people in your session</li>
+            </ul>
+
+            <div class="warning-box">
+                ⚠️ IMPORTANT: Your additions are TEMPORARY!<br>
+                They disappear when you refresh or close the page.
+            </div>
+
+            <h3>📷 Image Upload</h3>
+            <ul>
+                <li>Drag & drop or click to upload (JPG, PNG)</li>
+                <li>System detects all faces automatically</li>
+                <li>Results color-coded by confidence:</li>
+                <li style="margin-left: 30px;">🟢 Green = 70%+ (high confidence)</li>
+                <li style="margin-left: 30px;">🟡 Yellow = 50-70% (medium)</li>
+                <li style="margin-left: 30px;">🔴 Red = &lt;50% (low)</li>
+            </ul>
+
+            <h3>🎥 Video Upload</h3>
+            <ul>
+                <li>Upload any video file (MP4, AVI, MOV)</li>
+                <li>Processes every 10th frame for speed</li>
+                <li>Shows appearance count and confidence for each person</li>
+                <li>Captures best screenshot of each detected person</li>
+            </ul>
+
+            <h3>➕ Smart Capture (Recommended)</h3>
+            <ul>
+                <li>Automatically captures 50 images when your face is detected</li>
+                <li>Status indicators guide you:</li>
+                <li style="margin-left: 30px;">🔴 "Waiting for face..." = Position yourself in camera</li>
+                <li style="margin-left: 30px;">🟢 "Face detected - Capturing..." = Hold still!</li>
+                <li style="margin-left: 30px;">🔵 "Capture complete!" = Done! Enter name</li>
+            </ul>
+
+            <div class="tip-box">
+                💡 <strong>Tips for Best Results:</strong>
+                <ul style="margin-top: 10px; margin-bottom: 0;">
+                    <li>Face camera directly with good lighting</li>
+                    <li>Turn your head slightly between captures for variety</li>
+                    <li>Remove glasses/hats if possible</li>
+                    <li>Stay in frame during entire capture process</li>
+                </ul>
+            </div>
+
+            <h3>🔐 Session Isolation</h3>
+            <ul>
+                <li>Base faces (from database) = <strong>Permanent</strong></li>
+                <li>Your additions = <strong>Temporary (session only)</strong></li>
+                <li>Each user gets their own isolated session</li>
+                <li>Your changes won't affect other users</li>
+                <li>Click "Reset Session" to restore base faces only</li>
+            </ul>
+
+            <div class="warning-box">
+                📝 Remember: Closing tab = losing your additions!<br>
+                For permanent additions, the base database must be updated.
+            </div>
+
+            <button class="close-modal" onclick="closeInstructions()">Got It! Let's Start 🚀</button>
+        </div>
+    </div>
+
     <div class="container">
         <h1>🎭 Face Recognition System</h1>
         <p class="subtitle">ArcFace-powered recognition with session isolation</p>
@@ -476,7 +679,6 @@
         </div>
 
         <!-- Add Person Tab -->
-        <!-- Add Person Tab -->
         <div id="add-tab" class="tab-content">
             <h3>Add New Person (Temporary - Session Only)</h3>
             <p style="margin-bottom: 20px; color: #f59e0b; font-weight: bold;">⏱️ Added people are temporary and will disappear on page refresh!</p>
@@ -494,8 +696,7 @@
                     <div id="add-webcam-container" style="display: none; margin-top: 20px;">
                         <video id="add-webcam" autoplay></video>
 
-                        <!-- ADD THIS STATUS BOX -->
-                        <div id="capture-status" style="text-align: center; padding: 15px; margin: 15px auto; max-width: 400px; border-radius: 10px; font-weight: bold; font-size: 1.1em;">
+                        <div id="capture-status" class="capture-status waiting">
                             👤 Position your face in camera...
                         </div>
 
@@ -507,26 +708,27 @@
                     </div>
                 </div>
 
-
-                    <div style="flex: 1; min-width: 300px;">
-                        <h4>Option 2: Upload Single Photo</h4>
-                        <p style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
-                            Upload one image (less accurate than auto-capture)
-                        </p>
-                        <div class="upload-area" onclick="document.getElementById('add-person-input').click()" style="padding: 20px;">
-                            <p>Click to upload image</p>
-                            <input type="file" id="add-person-input" accept="image/*" onchange="loadAddImage(this.files[0])">
-                        </div>
-                    </div>
-                    <div id="add-preview" style="display: none; text-align: center;">
-                        <h4>Preview</h4>
-                        <img id="add-preview-img">
-                        <input type="text" id="person-name" placeholder="Enter person's name">
-                        <button class="btn" onclick="addPerson()" style="display: block; margin: 10px auto;">➕ Add to Session</button>
-                        <div id="add-result"></div>
+                <div style="flex: 1; min-width: 300px;">
+                    <h4>Option 2: Upload Single Photo</h4>
+                    <p style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
+                        Upload one image (less accurate than auto-capture)
+                    </p>
+                    <div class="upload-area" onclick="document.getElementById('add-person-input').click()" style="padding: 20px;">
+                        <p>Click to upload image</p>
+                        <input type="file" id="add-person-input" accept="image/*" onchange="loadAddImage(this.files[0])">
                     </div>
                 </div>
+            </div>
+
+            <div id="add-preview" style="display: none; text-align: center;">
+                <h4>Preview</h4>
+                <img id="add-preview-img">
+                <input type="text" id="person-name" placeholder="Enter person's name">
+                <button class="btn" onclick="addPerson()" style="display: block; margin: 10px auto;">➕ Add to Session</button>
+                <div id="add-result"></div>
+            </div>
         </div>
+
         <!-- Manage People Tab -->
         <div id="manage-tab" class="tab-content">
             <h3>Manage People in Your Session</h3>
@@ -545,7 +747,31 @@
         let captureInterval = null;
         let capturedImages = [];
         const TARGET_IMAGES = 50;
-        let basePeople = []; // Track base people
+        let basePeople = [];
+
+        // Show instructions on first visit
+        window.addEventListener('load', function() {
+            if (!localStorage.getItem('instructionsSeen')) {
+                setTimeout(showInstructions, 800);
+                localStorage.setItem('instructionsSeen', 'true');
+            }
+        });
+
+        function showInstructions() {
+            document.getElementById('instructionsModal').classList.add('show');
+        }
+
+        function closeInstructions() {
+            document.getElementById('instructionsModal').classList.remove('show');
+        }
+
+        // Close when clicking outside modal
+        window.onclick = function(event) {
+            const modal = document.getElementById('instructionsModal');
+            if (event.target === modal) {
+                closeInstructions();
+            }
+        }
 
         // Reset session
         async function resetSession() {
@@ -589,7 +815,6 @@
                 const data = await response.json();
                 console.log('✅ Data received:', data);
 
-                // Update stats
                 const statsDiv = document.getElementById('session-stats');
                 statsDiv.innerHTML = `
                     <span class="base">Base: ${data.base_count}</span> •
@@ -597,10 +822,8 @@
                     <span>Total: ${data.people.length}</span>
                 `;
 
-                // Determine which are base people (first base_count in the list)
                 basePeople = data.people.slice(0, data.base_count);
 
-                // Update tags
                 const tagsContainer = document.getElementById('people-tags');
                 if (data.people.length === 0) {
                     tagsContainer.innerHTML = '<p style="color: #999;">No people in session yet.</p>';
@@ -609,15 +832,12 @@
                         const isBase = basePeople.includes(person);
                         const className = isBase ? 'person-tag base' : 'person-tag temporary';
                         const title = isBase ? 'Permanent base person' : 'Temporary addition (this session only)';
-                        const displayName = person.replace('pins_', '')
+                        const displayName = person.replace('pins_', '');
                         return `<span class="${className}" title="${title}">${displayName}</span>`;
                     }).join('');
                 }
 
-                // Hide error message
                 document.getElementById('api-error').style.display = 'none';
-
-                // Update manage section
                 updateManageSection(data.people);
 
             } catch (error) {
@@ -628,7 +848,7 @@
                 errorDiv.innerHTML = `
                     <strong>⚠️ Cannot connect to server</strong><br>
                     Error: ${error.message}<br>
-                    <small>Make sure the Flask server is running at http://localhost:5000</small>
+                    <small>Make sure the server is running</small>
                 `;
 
                 document.getElementById('session-stats').innerHTML = '<span style="color: red;">Error</span>';
@@ -664,7 +884,6 @@
             }
         }
 
-        // Tab switching
         function showTab(event, tabName) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -673,7 +892,6 @@
             document.getElementById(`${tabName}-tab`).classList.add('active');
         }
 
-        // Add webcam with auto-capture
         async function startAddWebcam() {
             try {
                 addWebcamStream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -721,7 +939,6 @@
 
                 const imageData = canvas.toDataURL('image/jpeg', 0.8);
 
-                // Check for face before capturing
                 try {
                     const response = await fetch('/api/detect_face', {
                         method: 'POST',
@@ -733,7 +950,6 @@
                     const data = await response.json();
 
                     if (data.face_detected) {
-                        // Face detected! Capture it
                         capturedImages.push(imageData);
                         updateCaptureProgress(capturedImages.length, true);
 
@@ -750,7 +966,6 @@
                             alert(`✓ Captured ${TARGET_IMAGES} images! Enter the person's name and click Add.`);
                         }
                     } else {
-                        // No face detected
                         updateCaptureProgress(capturedImages.length, false);
                     }
                 } catch (error) {
@@ -882,7 +1097,6 @@
             }
         }
 
-        // Image upload
         async function uploadImage(file) {
             if (!file) return;
 
@@ -925,7 +1139,6 @@
             }
         }
 
-        // Video upload
         async function uploadVideo(file) {
             if (!file) return;
 
@@ -954,10 +1167,11 @@
                     data.detections.forEach(det => {
                         const confClass = det.confidence >= 0.7 ? 'high-conf' :
                                         det.confidence >= 0.5 ? 'medium-conf' : 'low-conf';
+                        const displayName = det.name.replace('pins_', '');
                         html += `
                             <div class="detection-box ${confClass}">
-                                <strong>${det.name}</strong> - Appeared ${det.appearances} times (${(det.confidence * 100).toFixed(1)}% max confidence)
-                                ${det.screenshot ? `<br><img src="${det.screenshot}" class="screenshot-img" alt="${det.name}">` : ''}
+                                <strong>${displayName}</strong> - Appeared ${det.appearances} times (${(det.confidence * 100).toFixed(1)}% max confidence)
+                                ${det.screenshot ? `<br><img src="${det.screenshot}" class="screenshot-img" alt="${displayName}">` : ''}
                             </div>
                         `;
                     });
@@ -969,7 +1183,6 @@
             }
         }
 
-        // Webcam
         async function startWebcam() {
             try {
                 webcamStream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -1054,7 +1267,7 @@
                     detDiv.innerHTML = data.detections
                         .filter(det => det.name !== 'Unknown')
                         .map(det => {
-                            const displayName = det.name.replace('pins_', ''); // ✅ Remove "pins_"
+                            const displayName = det.name.replace('pins_', '');
                             return `✓ ${displayName}: ${(det.confidence * 100).toFixed(1)}%`;
                         })
                         .join('<br>') || '❓ Unknown faces';
@@ -1064,7 +1277,6 @@
             }
         }
 
-        // Drag and drop
         ['image-drop', 'video-drop'].forEach(id => {
             const elem = document.getElementById(id);
 
@@ -1087,7 +1299,6 @@
             });
         });
 
-        // Load on start
         console.log('🚀 Page loaded, loading session data...');
         loadPeople();
     </script>
