@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+venv/
+.env
+temp_video.mp4
+static/screenshots/*.jpg
